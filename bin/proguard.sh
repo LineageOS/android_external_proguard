@@ -32,11 +32,11 @@ defaultMx="-Xmx2G"
 # example. "java" (with no args) and "java -X" give a summary of
 # available options.
 
-javaOpts=""
+declare -a javaOpts=()
 
 while expr "x$1" : 'x-J' >/dev/null; do
     opt=`expr "x$1" : 'x-J\(.*\)'`
-    javaOpts="${javaOpts} -${opt}"
+    javaOpts+=("-${opt}")
     if expr "x${opt}" : "xXmx[0-9]" >/dev/null; then
         defaultMx="no"
     fi
@@ -44,7 +44,7 @@ while expr "x$1" : 'x-J' >/dev/null; do
 done
 
 if [ "${defaultMx}" != "no" ]; then
-    javaOpts="${javaOpts} ${defaultMx}"
+    javaOpts+=("${defaultMx}")
 fi
 
-exec java $javaOpts -jar "$PROGUARD_HOME/lib/proguard.jar" "$@"
+exec java "${javaOpts[@]}" -jar "$PROGUARD_HOME/lib/proguard.jar" "$@"
